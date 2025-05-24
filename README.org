@@ -117,7 +117,8 @@ make deps
 4. Initialize the project:
 
 #+BEGIN_SRC shell
-make init
+# Optional: Install Emacs packages for org-mode support
+make install-emacs-packages
 #+END_SRC
 
 5. Choose your profile:
@@ -212,6 +213,56 @@ make help
 #+END_SRC
 
 This will display a list of commands with inline descriptions, making it easy to understand and use the project's development workflow.
+
+** Common Development Tasks
+
+*** Testing and Linting
+#+BEGIN_SRC shell
+# Run test suite
+make test
+
+# Run linters
+make lint
+
+# Fix linting issues
+make lint-fix
+#+END_SRC
+
+*** AWS Practice Commands
+#+BEGIN_SRC shell
+# Practice with AWS resources (audit only)
+make aws-practice
+
+# Clean up AWS resources used in practice
+make aws-practice-cleanup
+
+# AWS Rekognition - Count people in image
+make aws-rekognition
+
+# AWS Polly - Create a story
+make aws-polly
+#+END_SRC
+
+*** Study Resources Generation
+#+BEGIN_SRC shell
+# Generate study resources (ODT format)
+make study-resources
+
+# Tangle code blocks from org files
+make tangle
+
+# Generate diagrams from org files
+make generate-diagrams
+
+# Export org files to HTML
+make export-org
+#+END_SRC
+
+*** Cleanup
+#+BEGIN_SRC shell
+# Clean up generated files
+make clean
+#+END_SRC
 
 ** LocalStack Usage
 :PROPERTIES:
