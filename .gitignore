@@ -18,6 +18,10 @@ CHANGELOG.md
 _.sh
 #*#
 .eastwood
+# clojure standard v1
+.cpcache/
+.clj-kondo/.cache/
+.lsp/
 
 
 2310.07064.pdf
