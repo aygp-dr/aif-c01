@@ -1,11 +1,24 @@
 (ns user
+  "REPL entry point (clj -M:dev). Loads the project and instruments every
+  s/fdef'd fn so bad calls fail fast with explain-data.
+  clj -M:dev:rebel starts the rebel-readline REPL below (was `lein rebel`)."
   (:require [rebel-readline.core :as rebel]
             [rebel-readline.clojure.line-reader :as clj-line-reader]
             [rebel-readline.clojure.service.local :as clj-service]
             [rebel-readline.clojure.main :as rebel-main]
             [clojure.main :as main]
+            [clojure.spec.test.alpha :as stest]
             [portal.api :as p]
-            [cognitect.aws.client.api :as aws]))
+            [cognitect.aws.client.api :as aws]
+            [aif-c01.core]
+            [aif-c01.d0-setup.environment]
+            [aif-c01.d1-fundamentals.basics]
+            [aif-c01.d2-generative-ai.concepts]
+            [aif-c01.d3-foundation-models.applications]
+            [aif-c01.d4-responsible-ai.practices]
+            [aif-c01.d5-security-compliance.governance]))
+
+(stest/instrument)
 
 (defn help []
   (println "Available commands:")
@@ -48,5 +61,5 @@
               (aws-info)
               (portal)))))
 
-(defn -main [& args]
+(defn -main [& _args]
   (rebel-repl))

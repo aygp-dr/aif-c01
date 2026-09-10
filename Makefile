@@ -9,7 +9,7 @@ EXPORT_DIR := doc/export
 .DEFAULT_GOAL := help
 
 # Phony targets
-.PHONY: all help setup run test aws-practice localstack-up localstack-down \
+.PHONY: all help setup run test check aws-practice localstack-up localstack-down \
         switch-profile-lcl switch-profile-dev study-resources clean lint \
         tangle generate-diagrams export-org install-emacs-packages deps \
         aws-audit aws-cleanup
@@ -23,30 +23,33 @@ all: setup study-resources ## Set up the environment and generate study resource
 
 setup: ## Set up the project environment
 	@echo "Setting up the project environment..."
-	@lein deps
+	@clojure -P -M:dev:test
 	@poetry install
 	@make install-emacs-packages
 	@echo "Environment setup complete. You're ready to start learning!"
 
 run: ## Run the main application
 	@echo "Running the main application..."
-	@lein run
+	@bb run
 
 test: ## Run test suite
 	@echo "Running tests..."
-	@lein test
+	@bb test
 
 lint: ## Run linters
 	@echo "Running linters..."
-	@lein eastwood
-	@lein cljfmt check
+	@bb lint
+	@bb fmt
 	@flake8 scripts
 	@black --check scripts
 
 lint-fix: ## Fix linting issues
 	@echo "Fixing linting issues..."
-	@lein cljfmt fix
+	@bb fmt:fix
 	@black scripts
+
+check: ## Clojure lint + fmt + test (what CI runs)
+	@bb check
 
 
 aws-practice: ## Practice with AWS resources (audit and optionally clean up)
@@ -141,7 +144,7 @@ install-emacs-packages: ## Install required Emacs packages
 
 deps: ## Update project dependencies
 	@echo "Updating project dependencies..."
-	@lein deps
+	@clojure -P -M:dev:test
 	@poetry update
 
 aws-audit: ## Audit AWS resources (for advanced users)
