@@ -1,5 +1,7 @@
 (ns aif-c01.d0-setup.environment
-  (:require [cognitect.aws.client.api :as aws]
+  (:require [clj-http.client :as client]
+            [cognitect.aws.client.api :as aws]
+            [cognitect.aws.client.shared :as shared]
             [cognitect.aws.credentials :as credentials]))
 
 (defn test-proxy []
@@ -22,18 +24,10 @@
       (println "Response body:" (:body result)))
     result))
 
-;; Add this to your existing check-environment function
-(defn check-environment []
-  (println "Checking AWS environment and services...")
-  (let [results (assoc (run-all-checks)
-                       :proxy (check-proxy))]
-    (display-check-results results)
-    results))
-
 (defn check-aws-credentials []
   (try
-    (let [creds (credentials/default-credentials-provider)]
-      (if-let [aws-creds (credentials/credentials creds)]
+    (let [creds (shared/credentials-provider)]
+      (if-let [aws-creds (credentials/fetch creds)]
         {:status :success :message "AWS credentials found" :credentials aws-creds}
         {:status :error :message "No AWS credentials found"}))
     (catch Exception e
@@ -80,11 +74,12 @@
              (:message result))
     (when (= service :aws-credentials)
       (when-let [creds (:credentials result)]
-        (println "  Access Key ID:" (subs (:access-key-id creds) 0 5) "..."
+        (println "  Access Key ID:" (subs (:aws/access-key-id creds) 0 5) "..."
                  "\n  Expiration:" (:expiration creds))))))
 
 (defn check-environment []
   (println "Checking AWS environment and services...")
-  (let [results (run-all-checks)]
+  (let [results (assoc (run-all-checks)
+                       :proxy (check-proxy))]
     (display-check-results results)
     results))
