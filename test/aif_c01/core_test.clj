@@ -1,7 +1,12 @@
 (ns aif-c01.core-test
-  (:require [clojure.string :as str]
-            [clojure.test :refer [deftest is testing]]
+  (:require [clojure.spec.test.alpha :as stest]
+            [clojure.string :as str]
+            [clojure.test :refer [deftest is testing use-fixtures]]
             [aif-c01.core :as core]))
+
+;; Exercise every s/fdef :args spec while the unit tests run.
+(use-fixtures :once
+  (fn [f] (stest/instrument) (try (f) (finally (stest/unstrument)))))
 
 (deftest main-prints-domain-overview
   (testing "-main prints an overview of all five exam domains"

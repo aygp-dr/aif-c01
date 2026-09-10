@@ -3,7 +3,8 @@
             [aif-c01.d2-generative-ai.concepts :as d2]
             [aif-c01.d3-foundation-models.applications :as d3]
             [aif-c01.d4-responsible-ai.practices :as d4]
-            [aif-c01.d5-security-compliance.governance :as d5])
+            [aif-c01.d5-security-compliance.governance :as d5]
+            [clojure.spec.alpha :as s])
   (:gen-class))
 
 (defn -main
@@ -32,3 +33,7 @@
   (println "Data governance:" (d5/describe-data-governance-strategies))
 
   (println "\nGood luck with your exam preparation!"))
+
+(s/fdef -main
+  :args (s/* string?)
+  :ret nil?)
