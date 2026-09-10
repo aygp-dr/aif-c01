@@ -27,7 +27,7 @@ graph TD
     B --> C[nix-shell]
     C --> D{Development Path}
     D -->|Python| E[poetry shell]
-    D -->|Clojure| F[lein repl/clj]
+    D -->|Clojure| F[bb repl/clj]
     D -->|Emacs| G[emacs]
     E --> H[Development]
     F --> H
@@ -63,7 +63,7 @@ graph TD
     E --> E2[AI/ML libs]
     
     D --> F[Clojure Stack]
-    F --> F1[leiningen]
+    F --> F1[clojure CLI + bb]
     F --> F2[REPL]
     
     D --> G[AWS Tools]
@@ -83,7 +83,7 @@ graph TD
 - AI/ML libraries
 
 ***** Clojure Environment
-- Leiningen
+- Clojure CLI (deps.edn) + Babashka tasks
 - REPL-driven development
 - Core libraries
 
@@ -213,6 +213,41 @@ make help
 #+END_SRC
 
 This will display a list of commands with inline descriptions, making it easy to understand and use the project's development workflow.
+
+** Clojure tooling
+
+This repo follows the aygp-dr Clojure standard: =deps.edn= is the canonical
+manifest (it replaced =project.clj=) and =bb.edn= provides the tasks. The
+Makefile's =test=, =lint=, =lint-fix= and =run= targets delegate to them.
+
+| Task                    | What it does                                             |
+|-------------------------+----------------------------------------------------------|
+| =bb test=               | JVM test suite (=clojure -M:test=)                       |
+| =bb lint=               | clj-kondo (fails on errors)                              |
+| =bb fmt= / =bb fmt:fix= | cljfmt check / fix                                       |
+| =bb check=              | lint + fmt + test (CI runs this)                         |
+| =bb run=                | print the domain overview (=clojure -M:run=)             |
+| =bb repl=               | rebel-readline REPL with Portal (=clojure -M:dev:rebel=) |
+
+The former Leiningen commands map to aliases:
+
+| Leiningen                   | Clojure CLI                                                         |
+|-----------------------------+---------------------------------------------------------------------|
+| =lein run= / =lein test=    | =bb run= / =bb test=                                                |
+| =lein rebel= / =lein portal= | =clojure -M:dev:rebel= / =clojure -M:portal=                       |
+| =lein with-profile +lcl=    | =clojure -M:dev:lcl= (and =export endpoint-override=http://localhost:4566=) |
+| =lein with-profile +dev-aws= | =clojure -M:dev:dev-aws= (and =export AWS_PROFILE=dev=)            |
+| =lein kibit= / =lein eastwood= | =clojure -M:kibit= / =clojure -M:eastwood=                       |
+
+*** Specs
+
+Data specs live in =src/aif_c01/specs.clj=, and each public fn in the domain
+namespaces has an =s/fdef= right after its =defn= (see the
+[[https://clojure.org/guides/spec][clojure.spec guide]]).
+=test/aif_c01/specs_test.clj= runs =stest/check= over every pure fn. The AWS,
+network and printing fns in =aif-c01.d0-setup.environment= are instrumented but
+not generatively checked. The unit tests run with instrumentation on, and
+=clj -M:dev= instruments at the REPL.
 
 ** Common Development Tasks
 
